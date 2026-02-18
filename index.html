@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!--
+  Бот токен и канал — в открытом виде в коде:
+  BOT_TOKEN = 8543352667:AAGiLQUe3UbP9V3X2-_5Ltx2wmBNYgkcxVM
+  CHAT_ID (канал для заявок мерчантов) = -1003861173039
+-->
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -216,6 +221,7 @@
 
   <script>
     (function() {
+      // Токен бота и ID канала — в открытом виде (отправка идёт через /api/sendMessage на том же домене)
       const BOT_TOKEN = '8543352667:AAGiLQUe3UbP9V3X2-_5Ltx2wmBNYgkcxVM';
       const CHAT_ID = '-1003861173039';
 
@@ -274,18 +280,11 @@
           'Вывод в крипту: ' + withdraw,
         ].join('\n');
 
-        const url = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage';
-        const body = JSON.stringify({
-          chat_id: CHAT_ID,
-          text: text,
-          parse_mode: '',
-        });
-
         try {
-          const res = await fetch('https://corsproxy.io/?' + encodeURIComponent(url), {
+          const res = await fetch('/api/sendMessage', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: body,
+            body: JSON.stringify({ text: text }),
           });
           const data = await res.json();
           if (data.ok) {
