@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-<!--
-  Бот токен и канал — в открытом виде в коде:
-  BOT_TOKEN = 8543352667:AAGiLQUe3UbP9V3X2-_5Ltx2wmBNYgkcxVM
-  CHAT_ID (канал для заявок мерчантов) = -1003861173039
--->
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -33,7 +28,6 @@
       margin: 0;
       padding: 0;
       min-height: 100vh;
-      min-height: 100dvh;
       font-family: var(--font);
       font-size: 16px;
       background: var(--tg-bg);
@@ -43,7 +37,7 @@
 
     body {
       padding: 0 16px 0;
-      padding-top: calc(56px + env(safe-area-inset-top, 0px));
+      padding-top: calc(20px + env(safe-area-inset-top, 0px));
       padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
     }
 
@@ -57,12 +51,14 @@
       font-weight: 600;
       margin: 0 0 8px;
       color: var(--tg-text);
+      text-align: center;
     }
 
     .subtitle {
       font-size: 14px;
       color: var(--tg-hint);
       margin: 0 0 24px;
+      text-align: center;
     }
 
     .form-block {
@@ -72,18 +68,15 @@
       margin-bottom: 12px;
     }
 
-    .form-block:last-of-type {
-      margin-bottom: 16px;
-    }
-
     label {
       display: block;
-      font-size: 14px;
+      font-size: 13px;
       color: var(--tg-hint);
       margin-bottom: 6px;
+      font-weight: 500;
     }
 
-    input, textarea, select {
+    input, select {
       width: 100%;
       padding: 12px 14px;
       font-size: 16px;
@@ -93,21 +86,15 @@
       border: 1px solid var(--tg-divider);
       border-radius: 10px;
       outline: none;
-      transition: border-color 0.15s;
+      transition: border-color 0.2s;
     }
 
-    input::placeholder,
-    textarea::placeholder {
-      color: var(--tg-hint);
+    input::placeholder {
+      color: #5c6875;
     }
 
-    input:focus, textarea:focus, select:focus {
+    input:focus {
       border-color: var(--tg-accent);
-    }
-
-    textarea {
-      min-height: 80px;
-      resize: vertical;
     }
 
     .btn-wrap {
@@ -116,9 +103,10 @@
       right: 0;
       bottom: 0;
       padding: 12px 16px;
-      padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: calc(12px + env(safe-area-inset-bottom, 20px));
       background: var(--tg-bg);
-      z-index: 10;
+      z-index: 100;
+      border-top: 1px solid var(--tg-divider);
     }
 
     .btn {
@@ -128,8 +116,7 @@
       margin: 0 auto;
       padding: 14px 20px;
       font-size: 16px;
-      font-weight: 500;
-      font-family: inherit;
+      font-weight: 600;
       color: var(--tg-button-text);
       background: var(--tg-button);
       border: none;
@@ -139,180 +126,205 @@
     }
 
     .btn:active {
-      opacity: 0.9;
+      opacity: 0.85;
     }
 
     .btn:disabled {
-      opacity: 0.6;
+      opacity: 0.5;
       cursor: not-allowed;
+      filter: grayscale(0.8);
     }
 
+    /* Сообщения */
     .msg {
       text-align: center;
       padding: 12px;
       border-radius: 10px;
       margin-bottom: 16px;
       font-size: 14px;
+      line-height: 1.4;
     }
 
     .msg.success {
       background: rgba(42, 171, 238, 0.15);
-      color: var(--tg-accent);
+      color: #2aabee;
+      border: 1px solid rgba(42, 171, 238, 0.3);
     }
 
     .msg.error {
       background: rgba(255, 82, 82, 0.15);
       color: #ff5252;
+      border: 1px solid rgba(255, 82, 82, 0.3);
     }
 
-    .msg.hidden {
+    .hidden {
       display: none;
     }
   </style>
 </head>
 <body>
+
   <div class="page">
     <h1>Заявка на мерчанта</h1>
-    <p class="subtitle">Заполните анкету. Результат рассмотрит администратор.</p>
+    <p class="subtitle">Заполните анкету для рассмотрения администратором</p>
 
     <div id="msg" class="msg hidden"></div>
 
     <form id="form">
       <div class="form-block">
         <label for="name">Имя</label>
-        <input type="text" id="name" name="name" placeholder="Как к вам обращаться" required autocomplete="name">
+        <input type="text" id="name" placeholder="Как к вам обращаться" required>
       </div>
 
       <div class="form-block">
         <label for="country">Страна</label>
-        <input type="text" id="country" name="country" placeholder="Например: Россия" required>
+        <input type="text" id="country" placeholder="Например: Россия" required>
       </div>
 
       <div class="form-block">
-        <label for="monthly">Сумма, которую можете принимать в месяц ($)</label>
-        <input type="text" id="monthly" name="monthly" placeholder="Например: 50000" required>
+        <label for="monthly">Оборот в месяц ($)</label>
+        <input type="number" id="monthly" placeholder="Например: 50000" inputmode="numeric" required>
       </div>
 
       <div class="form-block">
-        <label for="single">Сумма одним платежом ($)</label>
-        <input type="text" id="single" name="single" placeholder="Например: 5000" required>
+        <label for="single">Макс. платеж ($)</label>
+        <input type="number" id="single" placeholder="Например: 5000" inputmode="numeric" required>
       </div>
 
       <div class="form-block">
-        <label for="time">Как много времени будете уделять работе</label>
-        <input type="text" id="time" name="time" placeholder="Часов в день / в неделю" required>
+        <label for="time">Время работы</label>
+        <input type="text" id="time" placeholder="Например: 8 часов в день" required>
       </div>
 
       <div class="form-block">
-        <label for="deals">Сколько сделок в день готовы открывать</label>
-        <input type="text" id="deals" name="deals" placeholder="Число или диапазон" required>
+        <label for="deals">Кол-во сделок в день</label>
+        <input type="text" id="deals" placeholder="Пример: 10-20" required>
       </div>
 
       <div class="form-block">
-        <label for="withdraw">Как быстро сможете выводить средства в криптовалюту</label>
-        <input type="text" id="withdraw" name="withdraw" placeholder="Например: в течение часа" required>
+        <label for="withdraw">Скорость вывода (крипта)</label>
+        <input type="text" id="withdraw" placeholder="Например: 30 мин" required>
       </div>
     </form>
+  </div>
 
-    <div class="btn-wrap">
-      <button type="submit" form="form" class="btn" id="submitBtn">Отправить</button>
-    </div>
+  <div class="btn-wrap">
+    <button type="submit" form="form" class="btn" id="submitBtn">Отправить заявку</button>
   </div>
 
   <script>
-    (function() {
-      // Токен бота и ID канала — в открытом виде (отправка идёт через /api/sendMessage на том же домене)
-      const BOT_TOKEN = '8543352667:AAGiLQUe3UbP9V3X2-_5Ltx2wmBNYgkcxVM';
-      const CHAT_ID = '-1003861173039';
+    // КОНФИГУРАЦИЯ БОТА (Вшитые данные)
+    const CONFIG = {
+      botToken: '8543352667:AAGiLQUe3UbP9V3X2-_5Ltx2wmBNYgkcxVM',
+      chatId: '-1003861173039'
+    };
 
-      const form = document.getElementById('form');
-      const submitBtn = document.getElementById('submitBtn');
-      const msgEl = document.getElementById('msg');
+    const tg = window.Telegram.WebApp;
+    const form = document.getElementById('form');
+    const submitBtn = document.getElementById('submitBtn');
+    const msgEl = document.getElementById('msg');
 
-      function showMsg(text, isError) {
-        msgEl.textContent = text;
-        msgEl.className = 'msg ' + (isError ? 'error' : 'success');
-        msgEl.classList.remove('hidden');
+    // Инициализация Telegram WebApp
+    tg.ready();
+    tg.expand();
+    
+    // Адаптация цветов под тему пользователя
+    if (tg.themeParams) {
+      const root = document.documentElement;
+      if(tg.themeParams.bg_color) root.style.setProperty('--tg-bg', tg.themeParams.bg_color);
+      if(tg.themeParams.section_bg_color) root.style.setProperty('--tg-block', tg.themeParams.section_bg_color);
+      if(tg.themeParams.text_color) root.style.setProperty('--tg-text', tg.themeParams.text_color);
+      if(tg.themeParams.hint_color) root.style.setProperty('--tg-hint', tg.themeParams.hint_color);
+      if(tg.themeParams.button_color) root.style.setProperty('--tg-button', tg.themeParams.button_color);
+      if(tg.themeParams.button_text_color) root.style.setProperty('--tg-button-text', tg.themeParams.button_text_color);
+    }
+
+    function showMessage(text, type) {
+      msgEl.textContent = text;
+      msgEl.className = `msg ${type}`;
+      msgEl.classList.remove('hidden');
+      // Скролл к сообщению
+      msgEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function getTelegramUser() {
+      if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        const u = tg.initDataUnsafe.user;
+        const name = `${u.first_name} ${u.last_name || ''}`.trim();
+        const username = u.username ? `@${u.username}` : 'нет юзернейма';
+        return `${name} (${username}, ID: ${u.id})`;
       }
+      return 'Неизвестный (открыто не в Telegram)';
+    }
 
-      function hideMsg() {
-        msgEl.classList.add('hidden');
-      }
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Отправка...';
+      msgEl.classList.add('hidden');
 
-      function getUsername() {
-        try {
-          const twa = window.Telegram && window.Telegram.WebApp;
-          const user = twa && twa.initDataUnsafe && twa.initDataUnsafe.user;
-          if (user) {
-            const un = user.username ? '@' + user.username : '';
-            const name = [user.first_name, user.last_name].filter(Boolean).join(' ') || user.id;
-            return un ? un + ' (' + name + ')' : 'ID: ' + user.id + ' ' + name;
-          }
-        } catch (e) {}
-        return 'Неизвестный пользователь';
-      }
+      // Сбор данных
+      const formData = {
+        name: document.getElementById('name').value,
+        country: document.getElementById('country').value,
+        monthly: document.getElementById('monthly').value,
+        single: document.getElementById('single').value,
+        time: document.getElementById('time').value,
+        deals: document.getElementById('deals').value,
+        withdraw: document.getElementById('withdraw').value,
+        tgUser: getTelegramUser()
+      };
 
-      form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        hideMsg();
-        submitBtn.disabled = true;
+      // Формирование текста сообщения
+      const messageText = `
+📋 <b>НОВАЯ ЗАЯВКА НА МЕРЧАНТА</b>
 
-        const username = getUsername();
-        const name = (document.getElementById('name').value || '').trim();
-        const country = (document.getElementById('country').value || '').trim();
-        const monthly = (document.getElementById('monthly').value || '').trim();
-        const single = (document.getElementById('single').value || '').trim();
-        const time = (document.getElementById('time').value || '').trim();
-        const deals = (document.getElementById('deals').value || '').trim();
-        const withdraw = (document.getElementById('withdraw').value || '').trim();
+👤 <b>Пользователь:</b> ${formData.tgUser}
 
-        const text = [
-          '📋 Заявка на мерчанта',
-          '',
-          '👤 Пользователь: ' + username,
-          '',
-          'Имя: ' + name,
-          'Страна: ' + country,
-          'Сумма в месяц ($): ' + monthly,
-          'Сумма одним платежом ($): ' + single,
-          'Время на работу: ' + time,
-          'Сделок в день: ' + deals,
-          'Вывод в крипту: ' + withdraw,
-        ].join('\n');
+1️⃣ <b>Имя:</b> ${formData.name}
+2️⃣ <b>Страна:</b> ${formData.country}
+3️⃣ <b>Оборот/мес:</b> $${formData.monthly}
+4️⃣ <b>Один платеж:</b> $${formData.single}
+5️⃣ <b>Время работы:</b> ${formData.time}
+6️⃣ <b>Сделок в день:</b> ${formData.deals}
+7️⃣ <b>Вывод в крипту:</b> ${formData.withdraw}
 
-        try {
-          const res = await fetch('/api/sendMessage', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: text }),
-          });
-          const data = await res.json();
-          if (data.ok) {
-            showMsg('Заявка отправлена. Ожидайте ответа администратора.', false);
-            form.reset();
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.close) {
-              setTimeout(function() { window.Telegram.WebApp.close(); }, 1500);
-            }
-          } else {
-            showMsg('Ошибка отправки: ' + (data.description || 'неизвестная'), true);
-          }
-        } catch (err) {
-          showMsg('Ошибка сети. Проверьте интернет и попробуйте снова.', true);
+<i>Отправлено через WebApp</i>
+      `;
+
+      try {
+        // Прямая отправка в Telegram API
+        const response = await fetch(`https://api.telegram.org/bot${CONFIG.botToken}/sendMessage`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            chat_id: CONFIG.chatId,
+            text: messageText,
+            parse_mode: 'HTML'
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.ok) {
+          showMessage('✅ Заявка успешно отправлена! Администратор свяжется с вами.', 'success');
+          form.reset();
+          // Закрыть окно через 2 секунды
+          setTimeout(() => tg.close(), 2500);
+        } else {
+          console.error('Telegram Error:', data);
+          showMessage(`❌ Ошибка Telegram: ${data.description}`, 'error');
         }
+      } catch (error) {
+        console.error('Network Error:', error);
+        showMessage('❌ Ошибка сети. Попробуйте позже или используйте VPN.', 'error');
+      } finally {
         submitBtn.disabled = false;
-      });
-
-      if (window.Telegram && window.Telegram.WebApp) {
-        const twa = window.Telegram.WebApp;
-        twa.ready();
-        twa.expand();
-        if (twa.requestFullscreen && typeof twa.requestFullscreen === 'function') {
-          try { twa.requestFullscreen(); } catch (_) {}
-        }
-        twa.setHeaderColor && twa.setHeaderColor('#18222d');
-        twa.setBackgroundColor && twa.setBackgroundColor('#18222d');
+        submitBtn.textContent = 'Отправить заявку';
       }
-    })();
+    });
   </script>
 </body>
 </html>
