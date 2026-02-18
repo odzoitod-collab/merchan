@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Заявка на мерчанта</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --tg-bg: #18222d;
+      --tg-block: #242f3d;
+      --tg-text: #e4e4e5;
+      --tg-hint: #8b959e;
+      --tg-divider: #2b3742;
+      --tg-accent: #2aabee;
+      --tg-button: #2aabee;
+      --tg-button-text: #fff;
+      --tg-input-bg: #242f3d;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      font-family: var(--font);
+      font-size: 16px;
+      background: var(--tg-bg);
+      color: var(--tg-text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      padding: 0 16px 0;
+      padding-top: calc(56px + env(safe-area-inset-top, 0px));
+      padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .page {
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0 0 8px;
+      color: var(--tg-text);
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--tg-hint);
+      margin: 0 0 24px;
+    }
+
+    .form-block {
+      background: var(--tg-block);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .form-block:last-of-type {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      color: var(--tg-hint);
+      margin-bottom: 6px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 16px;
+      font-family: inherit;
+      color: var(--tg-text);
+      background: var(--tg-input-bg);
+      border: 1px solid var(--tg-divider);
+      border-radius: 10px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--tg-hint);
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--tg-accent);
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .btn-wrap {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 12px 16px;
+      padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+      background: var(--tg-bg);
+      z-index: 10;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      font-size: 16px;
+      font-weight: 500;
+      font-family: inherit;
+      color: var(--tg-button-text);
+      background: var(--tg-button);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn:active {
+      opacity: 0.9;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .msg {
+      text-align: center;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    .msg.success {
+      background: rgba(42, 171, 238, 0.15);
+      color: var(--tg-accent);
+    }
+
+    .msg.error {
+      background: rgba(255, 82, 82, 0.15);
+      color: #ff5252;
+    }
+
+    .msg.hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Заявка на мерчанта</h1>
+    <p class="subtitle">Заполните анкету. Результат рассмотрит администратор.</p>
+
+    <div id="msg" class="msg hidden"></div>
+
+    <form id="form">
+      <div class="form-block">
+        <label for="name">Имя</label>
+        <input type="text" id="name" name="name" placeholder="Как к вам обращаться" required autocomplete="name">
+      </div>
+
+      <div class="form-block">
+        <label for="country">Страна</label>
+        <input type="text" id="country" name="country" placeholder="Например: Россия" required>
+      </div>
+
+      <div class="form-block">
+        <label for="monthly">Сумма, которую можете принимать в месяц ($)</label>
+        <input type="text" id="monthly" name="monthly" placeholder="Например: 50000" required>
+      </div>
+
+      <div class="form-block">
+        <label for="single">Сумма одним платежом ($)</label>
+        <input type="text" id="single" name="single" placeholder="Например: 5000" required>
+      </div>
+
+      <div class="form-block">
+        <label for="time">Как много времени будете уделять работе</label>
+        <input type="text" id="time" name="time" placeholder="Часов в день / в неделю" required>
+      </div>
+
+      <div class="form-block">
+        <label for="deals">Сколько сделок в день готовы открывать</label>
+        <input type="text" id="deals" name="deals" placeholder="Число или диапазон" required>
+      </div>
+
+      <div class="form-block">
+        <label for="withdraw">Как быстро сможете выводить средства в криптовалюту</label>
+        <input type="text" id="withdraw" name="withdraw" placeholder="Например: в течение часа" required>
+      </div>
+    </form>
+
+    <div class="btn-wrap">
+      <button type="submit" form="form" class="btn" id="submitBtn">Отправить</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const BOT_TOKEN = '8543352667:AAGiLQUe3UbP9V3X2-_5Ltx2wmBNYgkcxVM';
+      const CHAT_ID = '-1003861173039';
+
+      const form = document.getElementById('form');
+      const submitBtn = document.getElementById('submitBtn');
+      const msgEl = document.getElementById('msg');
+
+      function showMsg(text, isError) {
+        msgEl.textContent = text;
+        msgEl.className = 'msg ' + (isError ? 'error' : 'success');
+        msgEl.classList.remove('hidden');
+      }
+
+      function hideMsg() {
+        msgEl.classList.add('hidden');
+      }
+
+      function getUsername() {
+        try {
+          const twa = window.Telegram && window.Telegram.WebApp;
+          const user = twa && twa.initDataUnsafe && twa.initDataUnsafe.user;
+          if (user) {
+            const un = user.username ? '@' + user.username : '';
+            const name = [user.first_name, user.last_name].filter(Boolean).join(' ') || user.id;
+            return un ? un + ' (' + name + ')' : 'ID: ' + user.id + ' ' + name;
+          }
+        } catch (e) {}
+        return 'Неизвестный пользователь';
+      }
+
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        hideMsg();
+        submitBtn.disabled = true;
+
+        const username = getUsername();
+        const name = (document.getElementById('name').value || '').trim();
+        const country = (document.getElementById('country').value || '').trim();
+        const monthly = (document.getElementById('monthly').value || '').trim();
+        const single = (document.getElementById('single').value || '').trim();
+        const time = (document.getElementById('time').value || '').trim();
+        const deals = (document.getElementById('deals').value || '').trim();
+        const withdraw = (document.getElementById('withdraw').value || '').trim();
+
+        const text = [
+          '📋 Заявка на мерчанта',
+          '',
+          '👤 Пользователь: ' + username,
+          '',
+          'Имя: ' + name,
+          'Страна: ' + country,
+          'Сумма в месяц ($): ' + monthly,
+          'Сумма одним платежом ($): ' + single,
+          'Время на работу: ' + time,
+          'Сделок в день: ' + deals,
+          'Вывод в крипту: ' + withdraw,
+        ].join('\n');
+
+        const url = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage';
+        const body = JSON.stringify({
+          chat_id: CHAT_ID,
+          text: text,
+          parse_mode: '',
+        });
+
+        try {
+          const res = await fetch('https://corsproxy.io/?' + encodeURIComponent(url), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: body,
+          });
+          const data = await res.json();
+          if (data.ok) {
+            showMsg('Заявка отправлена. Ожидайте ответа администратора.', false);
+            form.reset();
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.close) {
+              setTimeout(function() { window.Telegram.WebApp.close(); }, 1500);
+            }
+          } else {
+            showMsg('Ошибка отправки: ' + (data.description || 'неизвестная'), true);
+          }
+        } catch (err) {
+          showMsg('Ошибка сети. Проверьте интернет и попробуйте снова.', true);
+        }
+        submitBtn.disabled = false;
+      });
+
+      if (window.Telegram && window.Telegram.WebApp) {
+        const twa = window.Telegram.WebApp;
+        twa.ready();
+        twa.expand();
+        if (twa.requestFullscreen && typeof twa.requestFullscreen === 'function') {
+          try { twa.requestFullscreen(); } catch (_) {}
+        }
+        twa.setHeaderColor && twa.setHeaderColor('#18222d');
+        twa.setBackgroundColor && twa.setBackgroundColor('#18222d');
+      }
+    })();
+  </script>
+</body>
+</html>
